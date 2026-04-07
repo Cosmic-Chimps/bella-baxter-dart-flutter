@@ -1,0 +1,53 @@
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    name: Publish bella_baxter_flutter to pub.dev
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for OIDC trusted publishing
+      contents: write  # Required for GitHub Release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          channel: stable
+
+      - name: Verify VERSION matches tag
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          FILE_VERSION=$(cat VERSION | tr -d '[:space:]')
+          if [ "$TAG" != "$FILE_VERSION" ]; then
+            echo "::error::Tag version '$TAG' does not match VERSION file '$FILE_VERSION'"
+            exit 1
+          fi
+          echo "Version check passed: $TAG"
+
+      - name: Set pubspec version from tag
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          sed -i "s/^version: .*/version: $TAG/" pubspec.yaml
+
+      - run: flutter pub get
+
+      - run: dart analyze --fatal-infos
+
+      - name: Publish to pub.dev
+        run: dart pub publish --force
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "bella_baxter_flutter $GITHUB_REF_NAME" \
+            --notes "See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details." \
+            --verify-tag

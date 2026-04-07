@@ -1,0 +1,10 @@
+# .pubignore — controls what pub includes when publishing.
+# When this file exists, pub uses it instead of .gitignore.
+
+# Development & CI
+.github/
+analysis_options.yaml
+
+# Local secrets / environment
+.env
+*.env
