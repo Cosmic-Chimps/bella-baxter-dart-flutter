@@ -39,6 +39,26 @@ jobs:
       - name: Remove local dependency override (use published bella_baxter)
         run: rm -f pubspec_overrides.yaml
 
+      - name: Fix example path dependencies to use hosted bella_baxter
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          # Replace path: ../../../dart with the published bella_baxter version in all example pubspecs
+          find example -name "pubspec.yaml" | while read f; do
+            python3 - "$f" "$TAG" <<'EOF'
+          import sys, re
+          path, version = sys.argv[1], sys.argv[2]
+          content = open(path).read()
+          # Replace "bella_baxter:\n    path: ..." block with "bella_baxter: ^VERSION"
+          content = re.sub(
+              r'bella_baxter:\s*\n\s+path:[^\n]+',
+              f'bella_baxter: ^{version}',
+              content
+          )
+          open(path, 'w').write(content)
+          print(f'Fixed {path}')
+          EOF
+          done
+
       - run: flutter pub get
 
       - run: dart analyze --fatal-infos
