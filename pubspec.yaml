@@ -1,10 +1,9 @@
 name: bella_baxter_flutter
-version: 0.1.1-preview.43
+version: 1.0.0
 description: >-
-  Flutter integration for the Bella Baxter Dart SDK. Provides
-  FlutterSecureSecretCache — a SecretCache implementation backed by
-  flutter_secure_storage for encrypted on-device secret caching.
-homepage: https://bella-baxter.io
+  Flutter integration for Bella Baxter secret management. Provides
+  FlutterSecureSecretCache backed by flutter_secure_storage for
+  encrypted on-device secret caching.
 repository: https://github.com/Cosmic-Chimps/bella-baxter-dart-flutter
 issue_tracker: https://github.com/Cosmic-Chimps/bella-baxter-dart-flutter/issues
 topics:
@@ -14,6 +13,14 @@ topics:
   - security
   - flutter
 
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
 environment:
   sdk: '>=3.0.0 <4.0.0'
   flutter: '>=3.10.0'
@@ -21,8 +28,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bella_baxter: ^0.1.1-preview.43
-  flutter_secure_storage: '>=9.0.0 <10.0.0'
+  bella_baxter: ^1.0.0
+  flutter_secure_storage: '>=9.0.0 <11.0.0'
 
 dev_dependencies:
   flutter_test:

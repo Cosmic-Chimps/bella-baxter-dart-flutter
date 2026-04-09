@@ -36,6 +36,9 @@ jobs:
           TAG="${GITHUB_REF_NAME#v}"
           sed -i "s/^version: .*/version: $TAG/" pubspec.yaml
 
+      - name: Remove local dependency override (use published bella_baxter)
+        run: rm -f pubspec_overrides.yaml
+
       - run: flutter pub get
 
       - run: dart analyze --fatal-infos
