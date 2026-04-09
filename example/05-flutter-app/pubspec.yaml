@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   bella_baxter:
+    path: ../../../dart
+  bella_baxter_flutter:
     path: ../../
   flutter_secure_storage: ^10.0.0
 
