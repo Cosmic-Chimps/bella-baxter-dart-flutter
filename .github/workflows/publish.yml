@@ -21,6 +21,10 @@ jobs:
           flutter-version: '3.x'
           channel: stable
 
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
       - name: Verify VERSION matches tag
         run: |
           TAG="${GITHUB_REF_NAME#v}"
