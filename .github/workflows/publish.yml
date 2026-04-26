@@ -63,23 +63,26 @@ jobs:
           EOF
           done
 
-      - name: Wait for bella_baxter to be available on pub.dev
+      - name: Wait for bella_baxter to be resolvable by pub
         run: |
           TAG="${GITHUB_REF_NAME#v}"
-          echo "Waiting for bella_baxter $TAG on pub.dev..."
+          echo "Waiting for bella_baxter $TAG to be resolvable by pub resolver..."
           for i in $(seq 1 30); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://pub.dev/packages/bella_baxter/versions/$TAG")
-            if [ "$STATUS" = "200" ]; then
-              echo "✓ bella_baxter $TAG is available on pub.dev (attempt $i)"
+            if flutter pub get 2>&1 | tee /tmp/pub_get_out.txt; then
+              echo "✓ flutter pub get succeeded (attempt $i)"
               exit 0
             fi
-            echo "Attempt $i/30: not yet available (HTTP $STATUS), waiting 20s..."
+            # Only retry on version-not-found / propagation lag errors
+            if ! grep -qE "doesn't match any versions|version solving failed|not found" /tmp/pub_get_out.txt; then
+              echo "::error::flutter pub get failed with unexpected error (attempt $i):"
+              cat /tmp/pub_get_out.txt
+              exit 1
+            fi
+            echo "  attempt $i/30 — bella_baxter $TAG not yet resolvable, waiting 20s..."
             sleep 20
           done
-          echo "::error::bella_baxter $TAG not available on pub.dev after 10 minutes"
+          echo "::error::bella_baxter $TAG not resolvable after 10 minutes"
           exit 1
-
-      - run: flutter pub get
 
       - run: dart analyze --fatal-infos
 
