@@ -1,5 +1,5 @@
 name: bella_baxter_flutter
-version: 0.1.1-preview.65
+version: 0.1.1-preview.66
 description: >-
   Flutter integration for Bella Baxter secret management. Provides
   FlutterSecureSecretCache backed by flutter_secure_storage for
@@ -28,7 +28,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  bella_baxter: ^0.1.1-preview.65
+  bella_baxter: ^0.1.1-preview.66
   flutter_secure_storage: '>=9.0.0 <11.0.0'
 
 dev_dependencies:
