@@ -44,7 +44,7 @@ class _SecretsPageState extends State<SecretsPage> {
   void initState() {
     super.initState();
     _client = BellaClient(BellaClientOptions(
-      // API key injected by `bella run` or `bella exec`.
+      // API key injected by `bella run` or `bella sdk run`.
       apiKey: const String.fromEnvironment('BELLA_API_KEY'),
       // Cache secrets across app launches using flutter_secure_storage.
       cache: FlutterSecureSecretCache(),

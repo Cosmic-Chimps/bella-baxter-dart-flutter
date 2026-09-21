@@ -6,13 +6,13 @@ using compile-time dart-defines (**dev mode**) and the production pattern with
 
 ---
 
-## Why `bella exec -- flutter run` doesn't work
+## Why `bella sdk run -- flutter run` doesn't work
 
 `String.fromEnvironment('KEY')` is a **compile-time constant** in Dart/Flutter.
 It is only populated via `--dart-define=KEY=VAL` flags at build/run time — **not**
 from shell environment variables.
 
-`bella exec` injects secrets into the shell process environment, but Flutter
+`bella sdk run` injects secrets into the shell process environment, but Flutter
 ignores those for `String.fromEnvironment`. The only supported mechanism is
 `--dart-define` or `--dart-define-from-file`.
 
