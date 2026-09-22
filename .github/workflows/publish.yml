@@ -65,13 +65,25 @@ jobs:
 
       - name: Wait for bella_baxter to be resolvable by pub
         run: |
+          # `pipefail` matters here and its absence is what broke releases 113 and 114.
+          # This loop used to read `if flutter pub get 2>&1 | tee …; then`, and a pipeline's exit
+          # status is the LAST command's — `tee`, which always succeeds. So the condition was
+          # ALWAYS true: the loop claimed success on attempt 1 and exited 0 no matter what pub did,
+          # and in 8 observed runs it never once retried (the step took 4-8s; one retry is 20s).
+          #
+          # The pipe is now gone entirely rather than merely guarded, because correctness should not
+          # depend on remembering an option. `pipefail` stays as a second line of defence for any
+          # pipeline added below.
+          set -o pipefail
           TAG="${GITHUB_REF_NAME#v}"
           echo "Waiting for bella_baxter $TAG to be resolvable by pub resolver..."
           for i in $(seq 1 30); do
-            if flutter pub get 2>&1 | tee /tmp/pub_get_out.txt; then
+            if flutter pub get >/tmp/pub_get_out.txt 2>&1; then
+              cat /tmp/pub_get_out.txt
               echo "✓ flutter pub get succeeded (attempt $i)"
               exit 0
             fi
+            cat /tmp/pub_get_out.txt
             # Only retry on version-not-found / propagation lag errors
             if ! grep -qE "doesn't match any versions|version solving failed|not found" /tmp/pub_get_out.txt; then
               echo "::error::flutter pub get failed with unexpected error (attempt $i):"
