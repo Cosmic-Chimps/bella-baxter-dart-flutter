@@ -96,7 +96,12 @@ jobs:
           echo "::error::bella_baxter $TAG not resolvable after 10 minutes"
           exit 1
 
-      - run: dart analyze --fatal-infos
+      # The published library is held to every lint, infos included. The examples are not published code: they are
+      # checked for errors and warnings only, because a new Flutter on the runner ('3.x') can deprecate an API they use
+      # (Flutter 3.47 deprecated package:flutter/material.dart for package:material_ui) and an info there blocked every
+      # release from 0.1.1-preview.147 to .149 without anything in the package changing.
+      - run: dart analyze --fatal-infos lib
+      - run: dart analyze --fatal-warnings example
 
       - name: Publish to pub.dev
         run: dart pub publish --force
